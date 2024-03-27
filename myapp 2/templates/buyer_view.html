@@ -1,0 +1,99 @@
+{% extends "guest_layout.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center" style="margin-bottom: 30px;">My Orders</h2>
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr class="info">
+                <th>Item Name</th>
+                <th>Seller</th>
+                <th>Original Price</th>
+                <th>Current Price</th>
+                <th>Deal Status</th>
+                <th>Seller's Rating</th>
+                <th>Rate Seller</th>
+                <th>Order Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.seller_name }}</td>
+                <td>{{ item.original_price }}</td>
+                <td>{{ item.current_price }}</td>
+                <td>{{ item.deal_status }}</td>
+                <td>
+                    {% if item.seller_rating %}
+                        {{ item.seller_rating }}
+                    {% else %}
+                        <span class="label label-warning">Seller has not shipped</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if item.buyer_rating %}
+                        {{ item.buyer_rating }} out of 10
+                    {% else %}
+                        <button class="btn btn-sm btn-primary rating-btn" data-id="{{ item.id }}" data-toggle="modal" data-target="#ratingModal">Rate</button>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if item.seller_rating and item.buyer_rating %}
+                        <span class="label label-success">Completed</span>
+                    {% else %}
+                        <span class="label label-danger">Incomplete</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="ratingModal" tabindex="-1" role="dialog" aria-labelledby="ratingModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ratingModalLabel">Rate the Seller</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="post">
+        {% csrf_token %}
+        <div class="modal-body">
+          <input type="hidden" name="item_id" id="rating_item_id">
+          <div class="form-group">
+            <label for="seller_rating">Seller's Rating (1-10)</label>
+            <select class="form-control" name="seller_rating" id="seller_rating" required>
+                {% for i in "12345678910"|make_list %}
+                <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Add JavaScript code to handle the rating button click event -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ratingButtons = document.querySelectorAll('.rating-btn');
+        ratingButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const itemId = this.getAttribute('data-id');
+                document.getElementById('rating_item_id').value = itemId;
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'guest_layout.html' %}
+
+{% block content %}
+    <div class="container">
+        <h2>Profile Maintenance</h2>
+        <form method="post" enctype="multipart/form-data" action="/myapp/guest_profile_edit_upload">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="bio">Personal Bio</label>
+                <textarea class="form-control" id="bio" name="bio" rows="3">{{ user.bio }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="signature">Personal Signature</label>
+                <input type="text" class="form-control" id="signature" name="signature" value="{{ user.signature }}">
+            </div>
+            <div class="form-group">
+                <label for="english_name">English Name</label>
+                <input type="text" class="form-control" id="english_name" name="english_name" value="{{ user.english_name }}">
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="text" class="form-control" id="phone" name="phone" value="{{ user.phone }}">
+            </div>
+
+            <div class="form-group">
+                <label for="skills">Skills</label>
+                <input type="text" class="form-control" id="skills" name="skills" value="{{ user.skills }}">
+            </div>
+            <div class="form-group">
+                <label for="skills">Email</label>
+                <input type="text" class="form-control" id="skills" name="email" value="{{ user.email }}">
+            </div>
+            <div class="form-group">
+                <label for="skills">Gender</label>
+                <input type="text" class="form-control" id="skills" name="sex" value="{{ user.sex }}">
+            </div>
+            <div class="form-group">
+                <label for="skills">Status (Enter 'Away' or 'Available')</label>
+                <input type="text" class="form-control" id="skills" name="status" value="{{ user.status }}">
+            </div>
+            <div class="form-group">
+                <label for="skills">User ID</label>
+                <input type="text" class="form-control" id="skills" name="uid" value="{{ user.uid }}">
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+{% endblock %}
+

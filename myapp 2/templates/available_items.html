@@ -1,0 +1,148 @@
+{% extends "guest_layout.html" %}
+{% load static %}
+
+{% block style %}
+<style>
+    .category-btn {
+        margin-right: 10px;
+        transition: 0.3s;
+    }
+
+    .category-btn:hover {
+        opacity: 0.8;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<!-- Modal -->
+<div class="modal fade" id="purchaseModal" tabindex="-1" role="dialog" aria-labelledby="purchaseModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="purchaseModalLabel">Enter Shipping Address</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="post">
+        {% csrf_token %}
+        <div class="modal-body">
+          <input type="hidden" name="item_id" id="item_id">
+          <div class="form-group">
+            <label for="receiving_address">Shipping Address</label>
+            <textarea class="form-control" name="receiving_address" id="receiving_address" rows="3" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+    <h2 class="text-center" style="margin-top: 20px; color: #34495e;">Market Dynamics</h2>
+    <hr>
+
+    <!-- Category Filtering and Price Sorting -->
+    <div class="row" style="margin-bottom: 20px;">
+        <!-- Category Horizontal Button Display -->
+        <div class="col-md-8">
+            <a href="?" class="btn btn-primary category-btn">All</a>
+            {% for category in categories %}
+            <a href="?category={{ category.id }}" class="btn btn-primary category-btn">{{ category.name }}</a>
+            {% endfor %}
+        </div>
+
+        <!-- Price Sorting Buttons -->
+        <div class="col-md-4 text-right">
+            <a href="?order=asc" class="btn btn-success">Ascending Price</a>
+            <a href="?order=desc" class="btn btn-danger">Descending Price</a>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for item in items %}
+        <div class="col-md-4">
+            <div class="thumbnail" style="border: none; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                <!-- Thumbnail Image, Click to Open Modal -->
+                <img src="{{ item.image.url }}" alt="{{ item.name }}" class="img-responsive" style="border-radius: 10px 10px 0 0; width: 200px; height: 150px; object-fit: cover;" data-toggle="modal" data-target="#imageModal{{ forloop.counter }}">
+
+                <!-- Image Modal -->
+                <div class="modal fade" id="imageModal{{ forloop.counter }}" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <img src="{{ item.image.url }}" alt="{{ item.name }}" class="img-responsive">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="caption" style="padding: 15px;">
+                    <h4 style="color: #2c3e50;">{{ item.name }}</h4>
+                    <p><strong>Seller:</strong> {{ item.seller_name }}</p>
+                    <p><strong>Seller Average Rating:</strong> {{ item.seller_avg_rating|floatformat:2 }}</p>
+                    <p><strong>Category:</strong> {{ item.category.name }}</p>
+                    <p><strong>Original Price:</strong> <del>{{ item.original_price }}</del></p>
+                    <p><strong>Current Price:</strong> <span class="text-danger">{{ item.current_price }}</span></p>
+                    <p><strong>Shipping Address:</strong> {{ item.shipping_address }}</p>
+                    <button class="btn btn-primary purchase-btn" data-id="{{ item.id }}" data-toggle="modal" data-target="#purchaseModal">Purchase</button>
+                    <a href="/myapp/item_detail/{{item.id }}" class="btn btn-info">Details</a>
+                    <form method="post" action="/myapp/add_to_favorites" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="item_id" value="{{ item.id }}">
+                        <button type="submit" class="btn btn-warning">Add to Favorites</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Pagination -->
+<div class="container" style="margin-top: 20px;">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <span class="step-links">
+                        {% if items.has_previous %}
+                            <li><a href="?page=1">&laquo; First Page</a></li>
+                            <li><a href="?page={{ items.previous_page_number }}">Previous</a></li>
+                        {% endif %}
+
+                        <span class="current">
+                            Page {{ items.number }} / {{ items.paginator.num_pages }}.
+                        </span>
+
+                        {% if items.has_next %}
+                            <li><a href="?page={{ items.next_page_number }}">Next</a></li>
+                            <li><a href="?page={{ items.paginator.num_pages }}">Last Page &raquo;</a></li>
+                        {% endif %}
+                    </span>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- Add JavaScript code to handle the click event of the purchase button -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const purchaseButtons = document.querySelectorAll('.purchase-btn');
+        purchaseButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const itemId = this.getAttribute('data-id');
+                document.getElementById('item_id').value = itemId;
+            });
+        });
+    });
+</script>
+{% endblock %}

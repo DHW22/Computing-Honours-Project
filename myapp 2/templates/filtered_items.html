@@ -1,0 +1,90 @@
+{% extends "guest_layout.html" %}
+{% load static %}
+
+{% block content %}
+<!-- Modal -->
+<div class="modal fade" id="ratingModal" tabindex="-1" role="dialog" aria-labelledby="ratingModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ratingModalLabel">Rating</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="post">
+        {% csrf_token %}
+        <div class="modal-body">
+          <input type="hidden" name="item_id" id="rating_item_id">
+          <div class="form-group">
+            <label for="buyer_rating">Buyer Rating (1-10)</label>
+            <select class="form-control" name="seller_rating" id="seller_rating" required>
+                {% for i in "12345678910"|make_list %}
+                <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="container">
+    <h2>Pending Shipments</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th>Original Price</th>
+                <th>Current Price</th>
+                <th>Listed Status</th>
+                <th>Audit Status</th>
+                <th>Seller</th>
+                <th>Buyer</th>
+                <th>Deal Status</th>
+                <th>Shipping Address</th>
+                <th>Receiving Address</th>
+                <th>Rate Buyer</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+                        {% if not item.seller_rating and not item.buyer_rating %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.category.name }}</td>
+                <td>{{ item.original_price }}</td>
+                <td>{{ item.current_price }}</td>
+                <td>{{ item.on_sale_status }}</td>
+                <td>{{ item.audit_status }}</td>
+                <td>{{ item.seller_name }}</td>
+                <td>{{ item.buyer_name }}</td>
+                <td>{{ item.deal_status }}</td>
+                <td>{{ item.shipping_address }}</td>
+                <td>{{ item.receiving_address }}</td>
+                <td>
+    <button class="btn btn-success rating-btn" data-id="{{ item.id }}" data-toggle="modal" data-target="#ratingModal">Payment Complete</button>
+</td>
+            </tr>
+                       {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ratingButtons = document.querySelectorAll('.rating-btn');
+        ratingButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const itemId = this.getAttribute('data-id');
+                document.getElementById('rating_item_id').value = itemId;
+            });
+        });
+    });
+</script>
+{% endblock %}

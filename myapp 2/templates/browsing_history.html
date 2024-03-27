@@ -1,0 +1,34 @@
+{% extends "guest_layout.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h2>My Browsing History</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th>Original Price</th>
+                <th>Current Price</th>
+                <th>Seller</th>
+                <th>Viewed Time</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for history in history_items %}
+            <tr>
+                <td>{{ history.item.name }}</td>
+                <td>{{ history.item.category.name }}</td>
+                <td>{{ history.item.original_price }}</td>
+                <td>{{ history.item.current_price }}</td>
+                <td>{{ history.item.seller_name }}</td>
+                <td>{{ history.viewed_at }}</td>
+                <td><a href="/myapp/item_detail/{{ history.item.id }}" class="btn btn-info">View Details</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

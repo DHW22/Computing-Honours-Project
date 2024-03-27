@@ -1,0 +1,49 @@
+{% extends "guest_layout.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h2>My Credit Score: {{score.personal_rating}}</h2>
+    <h2>Money Earned</h2>
+
+    <!-- Piggy Bank SVG Image -->
+    <div class="text-center">
+        <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+            <!-- Piggy Bank Body -->
+            <ellipse cx="100" cy="130" rx="90" ry="70" fill="#FFD700" stroke="#DAA520" stroke-width="3"/>
+            <!-- Piggy Bank Top -->
+            <ellipse cx="100" cy="60" rx="50" ry="40" fill="#FFD700" stroke="#DAA520" stroke-width="3"/>
+            <!-- Piggy Bank Coin Slot -->
+            <rect x="80" y="40" width="40" height="10" fill="#DAA520"/>
+            <!-- Piggy Bank Label -->
+            <rect x="70" y="80" width="60" height="30" fill="#FFFFFF" stroke="#DAA520" stroke-width="2"/>
+            <text x="75" y="100" font-family="Arial" font-size="16" fill="#000000">Bank</text>
+        </svg>
+    </div>
+
+    <!-- Display the total money earned -->
+    <h3 class="text-center">Total: ¥{{ total_earned }}</h3>
+
+    <!-- Display the list of completed transactions -->
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Seller</th>
+                <th>Buyer</th>
+                <th>Transaction Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.seller_name }}</td>
+                <td>{{ item.buyer_name }}</td>
+                <td>¥{{ item.current_price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "guest_layout.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+    <h2>My Shopping Cart</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Original Price</th>
+                <th>Current Price</th>
+                <th>Transaction Status</th>
+                <th>Shipping Address</th>
+                <th>Remove</th>
+                <th>Checkout</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart_items %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.category.name }}</td>
+                <td>{{ item.original_price }}</td>
+                <td>{{ item.current_price }}</td>
+                <td>{{ item.deal_status }}</td>
+                <td>{{ item.shipping_address }}</td>
+                <td>
+                    <form method="post" action="/myapp/remove_from_cart/{{item.id}}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-warning">Remove</button>
+                    </form>
+                </td>
+                <td>
+                    <form method="post" action="/myapp/checkout_item/{{item.id}}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success">Checkout</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

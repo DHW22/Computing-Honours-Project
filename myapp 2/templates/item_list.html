@@ -1,0 +1,148 @@
+{% extends "guest_layout.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+    <div class="alert alert-warning alert-dismissible" role="alert" style="margin-top: 20px; margin-bottom: 20px;">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+The traded goods will not be deleted.
+    </div>
+
+    <h2 class="text-center" style="margin-bottom: 30px;">List of items</h2>
+    <table class="table table-bordered table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th>Original Price</th>
+                <th>Current Price</th>
+                <th>Listed Status</th>
+                <th>Audit Status</th>
+                <th>Deal Status</th>
+                <th>Shipping Address</th>
+                <th>Receiving Address</th>
+                <th>Buyer Name</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td class="item-name">{{ item.name }}</td>
+                <td class="item-category">{{ item.category.name }}</td>
+                <td class="item-original-price">{{ item.original_price }}</td>
+                <td class="item-current-price">{{ item.current_price }}</td>
+                <td class="item-listed-status">{{ item.on_sale_status }}</td>
+                <td>{{ item.audit_status }}</td>
+                <td>{{ item.deal_status }}</td>
+                <td>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="item_id" value="{{ item.id }}">
+                        <input type="text" name="shipping_address" value="{{ item.shipping_address }}" class="form-control" readonly>
+                    </form>
+                </td>
+                <td>{{ item.receiving_address }}</td>
+                <td>{{ item.buyer_name }}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm edit-btn" data-id="{{ item.id }}" data-toggle="modal" data-target="#editModal{{ item.id }}">Edit</button>
+                </td>
+                <td>
+                    {% if item.on_sale_status == "For Sale" %}
+                    <form method="post" action="/myapp/delete_item">
+                        {% csrf_token %}
+                        <input type="hidden" name="item_id" value="{{ item.id }}">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            <!-- Modal -->
+            <div class="modal fade" id="editModal{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ item.id }}" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color: #f5f5f5;">
+                            <h5 class="modal-title" id="editModalLabel{{ item.id }}" style="color: #333;">Edit Item Information</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="modal-body">
+                                <input type="hidden" name="item_id" value="{{ item.id }}">
+                                <div class="form-group">
+                                    <label for="name">Item Name</label>
+                                    <input type="text" class="form-control" name="name" value="{{ item.name }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="category">Category <span class="badge badge-danger">Don't forget to fill in</span></label>
+                                    <select class="form-control" name="category">
+                                        {% for category in categories %}
+                                        <option value="{{ category.id }}" {% if category == item.category %}selected{% endif %}>{{ category.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="original_price">Original Price</label>
+                                    <input type="text" class="form-control" name="original_price" value="{{ item.original_price }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="current_price">Current Price</label>
+                                    <input type="text" class="form-control" name="current_price" value="{{ item.current_price }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="shipping_address">Shipping Address <span class="badge badge-danger">Don't forget to fill in</span></label>
+                                    <input type="text" class="form-control" name="shipping_address" value="{{ item.shipping_address }}">
+                                </div>
+                                <!-- ... Other fields ... -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if show_alert %}
+<script>
+    window.onload = function() {
+        alert('Incomplete information provided.');
+    }
+</script>
+{% endif %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const editButtons = document.querySelectorAll('.edit-btn');
+        editButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const itemId = this.getAttribute('data-id');
+                const modal = document.querySelector(`#editModal${itemId}`);
+                const row = this.closest('tr');
+                const name = row.querySelector('.item-name').textContent;
+                const category = row.querySelector('.item-category').textContent;
+                const originalPrice = row.querySelector('.item-original-price').textContent;
+                const currentPrice = row.querySelector('.item-current-price').textContent;
+                const listedStatus = row.querySelector('.item-listed-status').textContent;
+                modal.querySelector(`input[name="name"]`).value = name;
+                modal.querySelector(`select[name="category"]`).value = category;
+                modal.querySelector(`input[name="original_price"]`).value = originalPrice;
+                modal.querySelector(`input[name="current_price"]`).value = currentPrice;
+                modal.querySelector(`select[name="on_sale_status"]`).value = listedStatus;
+            });
+        });
+    });
+</script>
+
+{% endblock %}

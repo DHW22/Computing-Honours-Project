@@ -1,0 +1,31 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<div class="bs-example" data-example-id="hoverable-table">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Password</th>
+          <th>Role</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+
+     {% for i in info %}
+        <tr>
+          <th scope="row"></th>
+          <td>{{ i.name }}</td>
+          <td>{{ i.password }}</td>
+          <td>{{ i.role }}</td>
+          <td><a href="user_delete/{{ i.name }}/{{ i.password }}">Delete</a></td>
+        </tr>
+     {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'guest_layout.html' %}
+
+{% block content %}
+<div style="display:flex;justify-content:center;align-items:center">
+    <br>
+    <br>
+    <div class="col-sm-6 col-md-4">
+            <div class="caption">
+                <div style="display:flex;justify-content:center;align-items:center">
+                    <h3>Name: {{user.name}}</h3>
+                </div>
+                <div style="display:flex;justify-content:center;align-items:center">
+                    <h3>English Name: {{user.english_name}}</h3>
+                </div>
+                <div style="display:flex;justify-content:center;align-items:center">
+                    <h3>Signature: {{user.signature}}</h3>
+                </div>
+                <div style="display:flex;justify-content:center;align-items:center">
+                    <h3>Personal Introduction: {{user.bio}}</h3>
+                </div>
+                <div style="display:flex;justify-content:center;align-items:center">
+                    <h3>Phone Number: {{user.phone}}</h3>
+                </div>
+                <div style="display:flex;justify-content:center;align-items:center">
+                    <h3>Occupation: {{user.skills}}</h3>
+                </div>
+                <div style="display:flex;justify-content:center;align-items:center">
+                    <p><a href="/myapp/guest_profile_edit" class="btn btn-primary" role="button">Edit</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

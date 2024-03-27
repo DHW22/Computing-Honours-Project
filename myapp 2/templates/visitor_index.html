@@ -1,0 +1,206 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static '/plugins/bootstrap-3.4.1/css/bootstrap.css' %}">
+    <title>Home</title>
+    <style>
+        body {
+          font-family: 'Roboto', sans-serif;
+          margin: 0;
+          padding: 0;
+          background-color: #f5f5f5; /* Add background color */
+        }
+
+        .navbar {
+          background-color: #34495e; /* Dark blue navigation bar */
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px 20px;
+        }
+
+        .nav-links {
+          display: flex;
+          align-items: center;
+        }
+
+        .nav-link {
+          color: white;
+          text-decoration: none;
+          margin-right: 20px;
+          transition: 0.3s;
+        }
+
+        .nav-link:hover {
+          opacity: 0.7;
+        }
+
+        .dropdown {
+          position: relative;
+          display: inline-block;
+        }
+
+        .dropdown-content {
+          display: none;
+          position: absolute;
+          background-color: #ecf0f1; /* Light gray background for dropdown menu */
+          min-width: 160px;
+          box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+          padding: 12px 16px;
+          z-index: 1;
+        }
+
+        .dropdown:hover .dropdown-content {
+          display: block;
+        }
+
+        .dropdown-content a {
+          color: #2c3e50; /* Dark blue text */
+          text-decoration: none;
+          display: block;
+        }
+
+        .dropdown-content a:hover {
+          color: #e74c3c; /* Red hover effect */
+        }
+
+        .btn-default {
+          background-color: #3498db; /* Blue button */
+          color: white;
+        }
+
+        .btn-default:hover {
+          background-color: #2980b9; /* Dark blue hover effect */
+        }
+
+        .thumbnail img {
+            width: 200px;  /* Set fixed width */
+            height: 150px; /* Set fixed height */
+            object-fit: cover; /* Crop image to fit container while maintaining aspect ratio */
+        }
+        {% block style %}{% endblock %}
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <ul class="nav navbar-nav">
+            <li ><a href="/myapp/visitor_index">Products</a></li>
+            <li><a href="/myapp/login">Login</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Page Title -->
+<div class="jumbotron text-center" style="margin-top: 60px; background-color: #f5f5f5;">
+    <h1>Welcome to the Product Trading Website</h1>
+    <p>Discover products you love</p>
+</div>
+
+<!-- Category Filtering and Price Sorting -->
+<div class="container" style="margin-top: 20px;">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="categoryDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Category
+                    <span class="caret"></span>
+                </button>
+
+                <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+                    <li><a href="?">All</a></li>
+                    {% for category in categories %}
+                    <li><a href="?category={{ category.id }}">{{ category.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-8 text-right">
+            <a href="?order=asc" class="btn btn-default">Price Ascending</a>
+            <a href="?order=desc" class="btn btn-default">Price Descending</a>
+        </div>
+    </div>
+</div>
+</br>
+<!-- Product Display Area -->
+<div class="container">
+        <div class="row">
+        {% for item in items %}
+        <div class="col-md-4">
+            <div class="thumbnail">
+                {% if item.image %}
+           <img src="{{ item.image.url }}" alt="{{ item.name }}" class="img-responsive" data-toggle="modal" data-target="#modal{{ forloop.counter }}">
+                {% endif %}
+
+                <div class="caption">
+                    <h3>{{ item.name }}</h3>
+                    <p><strong>Original Price:</strong> {{ item.original_price }}</p>
+                    <p><strong>Current Price:</strong> <span class="text-danger">{{ item.current_price }}</span></p>
+                    <p><strong>Status:</strong> {{ item.on_sale_status }}</p>
+                    <p><strong>Shipping Status:</strong> {{ item.shipping_status }}</p>
+                </div>
+            </div>
+                      <!-- Modal Structure -->
+            <div class="modal fade" id="modal{{ forloop.counter }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">{{ item.name }}</h4>
+                        </div>
+                        <div class="modal-body">
+                            <img src="{{ item.image.url }}" alt="{{ item.name }}" class="img-responsive">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Pagination -->
+<div class="container" style="margin-top: 20px;">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <span class="step-links">
+                        {% if items.has_previous %}
+                            <li><a href="?page=1">&laquo; First Page</a></li>
+                            <li><a href="?page={{ items.previous_page_number }}">Previous</a></li>
+                        {% endif %}
+
+                        <span class="current">
+                            Page {{ items.number }} / {{ items.paginator.num_pages }}.
+                        </span>
+
+                        {% if items.has_next %}
+                            <li><a href="?page={{ items.next_page_number }}">Next</a></li>
+                            <li><a href="?page={{ items.paginator.num_pages }}">Last Page &raquo;</a></li>
+                        {% endif %}
+                    </span>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- ... Other code ... -->
+
+<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+<script src="{% static '/plugins/bootstrap-3.4.1/js/bootstrap.js' %}"></script>
+<script src="{% static '/plugins/bootstrap-3.4.1/js/jquery-3.6.0.js' %}"></script>
+
+</body>
+</html>

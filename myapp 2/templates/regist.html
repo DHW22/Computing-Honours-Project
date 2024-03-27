@@ -1,0 +1,56 @@
+{% extends 'basic_layout.html' %}
+
+{% block content %}
+<div style="display:flex;justify-content:center;align-items:center">
+<form method="POST" action="regist" id="registrationForm">
+    {% csrf_token %}
+    <div class="form-group">
+        </br>
+        </br>
+        </br>
+        <label for="usernameInput">account</label>
+        <input type="text" class="form-control" id="usernameInput" placeholder="username" name="a">
+    </div>
+    <div class="form-group">
+        </br>
+        </br>
+        <label for="passwordInput">password</label>
+        <input type="password" class="form-control" id="passwordInput" placeholder="xxxx" name="b">
+    </div>
+    <div class="form-group">
+        </br>
+        <label for="confirmPasswordInput">check password</label>
+        <input type="password" class="form-control" id="confirmPasswordInput" placeholder="再次输入密码">
+        <span id="passwordError" style="color: red;"></span>
+    </div>
+    </br>
+    <div class="form-group">
+        </br>
+        <label for="emailInput">email</label>
+        <input type="email" class="form-control" id="emailInput" placeholder="example@example.com" name="email" required>
+    </div>
+    </br>
+    </br>
+    <button type="submit" class="btn btn-default">submit</button>
+</form>
+</div>
+
+<script>
+document.getElementById('registrationForm').addEventListener('submit', function(e) {
+    const password = document.getElementById('passwordInput').value;
+    const confirmPassword = document.getElementById('confirmPasswordInput').value;
+    const passwordError = document.getElementById('passwordError');
+
+    if (password !== confirmPassword) {
+        e.preventDefault();
+        passwordError.textContent = 'The passwords entered twice are inconsistent!';
+    } else if (password.length < 6) {
+        e.preventDefault();
+        passwordError.textContent = 'Password must be at least 6 digits!';
+    } else {
+        passwordError.textContent = '';
+    }
+});
+</script>
+
+{% endblock %}

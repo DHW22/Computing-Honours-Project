@@ -1,0 +1,42 @@
+{% extends 'guest_layout.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <h1>Email Editor</h1>
+            <form method="post" action="" class="form-horizontal">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="recipient" class="col-sm-2 control-label">Recipient:</label>
+                    <div class="col-sm-10">
+                        <select id="recipient" name="recipient" class="form-control" required>
+                            <option value="">Select a recipient</option>
+                            {% for user in users %}
+                                <option value="{{ user.name }}">{{ user.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="subject" class="col-sm-2 control-label">Subject:</label>
+                    <div class="col-sm-10">
+                        <input type="text" id="subject" name="subject" class="form-control" maxlength="200" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="body" class="col-sm-2 control-label">Body:</label>
+                    <div class="col-sm-10">
+                        <textarea id="body" name="body" class="form-control" rows="10" required></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary">Send</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

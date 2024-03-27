@@ -1,0 +1,32 @@
+{% extends "guest_layout.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h2>My Favorites</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Original Price</th>
+                <th>Current Price</th>
+                <th>Seller</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for favorite in favorites %}
+            <tr>
+                <td>{{ favorite.item.name }}</td>
+                <td>{{ favorite.item.category.name }}</td>
+                <td>{{ favorite.item.original_price }}</td>
+                <td>{{ favorite.item.current_price }}</td>
+                <td>{{ favorite.item.seller_name }}</td>
+                <td><a href="/myapp/item_detail/{{ favorite.item.id }}" class="btn btn-info">View Details</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'guest_layout.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <label for="subjectFilter">Filter by Subject:</label>
+            <select id="subjectFilter" name="subjectFilter" class="form-control" onchange="filterSubject()">
+                <option value="">All Subjects</option>
+                {% for subject in subjects %}
+                    <option value="{{ subject }}">{{ subject }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="bs-example" data-example-id="hoverable-table">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Sender</th>
+                <th>Recipient</th>
+                <th>Body</th>
+                <th>Sent Time</th>
+                <th>Subject</th>
+            </tr>
+        </thead>
+        <tbody id="emailTable">
+            {% for i in info %}
+                <tr>
+                    <th scope="row"></th>
+                    <td>{{i.sender}}</td>
+                    <td>{{i.recipient}}</td>
+                    <td>{{i.body}}</td>
+                    <td>{{i.sent_time}}</td>
+                    <td>{{i.subject}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+function filterSubject() {
+    const subjectFilter = document.getElementById('subjectFilter').value;
+    const emailTable = document.getElementById('emailTable');
+    const rows = emailTable.getElementsByTagName('tr');
+
+    for (let i = 0; i < rows.length; i++) {
+        const subjectCell = rows[i].getElementsByTagName('td')[4];
+        if (subjectCell) {
+            if (subjectFilter === '' || subjectCell.textContent === subjectFilter) {
+                rows[i].style.display = '';
+            } else {
+                rows[i].style.display = 'none';
+            }
+        }
+    }
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "guest_layout.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h2>Recommended Products for You</h2>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Original Price</th>
+                <th>Current Price</th>
+                <th>Seller</th>
+                <th>Shipping Address</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.category.name }}</td>
+                <td>{{ item.original_price }}</td>
+                <td>{{ item.current_price }}</td>
+                <td>{{ item.seller_name }}</td>
+                <td>{{ item.shipping_address }}</td>
+                <td><a href="/myapp/item_detail/{{item.id }}" class="btn btn-info">View Details</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
